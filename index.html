@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OptumRx Prior Authorization &mdash; FTC Milestone Bonus Timeline 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   THEME VARIABLES
+   ============================================================ */
+:root {
+  --navy-900: #0B1A33;
+  --navy-800: #142A4D;
+  --navy-700: #1C3A66;
+  --navy-500: #3A5480;
+  --navy-300: #7C93B8;
+  --cream-100: #FBF7EC;
+  --cream-200: #F4EEDD;
+  --cream-300: #EBE1C6;
+  --gold-500: #B8862F;
+  --gold-400: #D2A24C;
+  --gold-100: #F1DFAF;
+  --ink: #101820;
+  --glass-bg: rgba(251, 247, 236, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --shadow-soft: 0 12px 32px rgba(11, 26, 51, 0.14);
+  --shadow-lift: 0 20px 48px rgba(11, 26, 51, 0.22);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+body { font-family: 'Inter', sans-serif; color: var(--ink); background: var(--navy-900); }
+
+/* ============================================================
+   DECK SHELL
+   ============================================================ */
+.deck { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: var(--cream-100); overflow: hidden; }
+
+.section {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden;
+  transform: translateX(40px);
+  transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+.section.active { opacity: 1; visibility: visible; transform: translateX(0); pointer-events: auto; }
+.section.leaving-back { transform: translateX(-40px); }
+
+/* Background morph blobs (ambient, non-blank feel) */
+.morph-bg {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.morph-blob {
+  position: absolute;
+  background: linear-gradient(135deg, var(--gold-100), transparent 70%);
+  opacity: 0.5;
+  filter: blur(2px);
+  animation: morph 14s ease-in-out infinite;
+}
+.morph-blob.b1 { width: 340px; height: 300px; top: -80px; right: -60px; animation-delay: 0s; }
+.morph-blob.b2 { width: 260px; height: 260px; bottom: -100px; left: -60px; background: linear-gradient(135deg, var(--navy-300), transparent 70%); opacity: 0.18; animation-delay: -6s; }
+@keyframes morph {
+  0%, 100% { border-radius: 42% 58% 65% 35% / 45% 40% 60% 55%; transform: rotate(0deg) scale(1); }
+  33% { border-radius: 60% 40% 30% 70% / 55% 65% 35% 45%; transform: rotate(6deg) scale(1.05); }
+  66% { border-radius: 35% 65% 55% 45% / 40% 55% 45% 60%; transform: rotate(-4deg) scale(0.97); }
+}
+@media (prefers-reduced-motion: reduce) { .morph-blob { animation: none; } }
+
+/* ============================================================
+   NAV CHROME
+   ============================================================ */
+.nav-chrome { position: absolute; bottom: 28px; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 24px; z-index: 50; }
+.nav-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 1px solid var(--navy-500); background: var(--glass-bg);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  color: var(--navy-900); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.15s, border-color 0.2s;
+  box-shadow: var(--shadow-soft);
+}
+.nav-btn:hover { background: var(--navy-900); color: var(--cream-100); transform: translateY(-2px); }
+.nav-btn:active { transform: translateY(0) scale(0.96); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+.dots { display: flex; gap: 10px; padding: 8px 16px; background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 20px; border: 1px solid var(--glass-border); box-shadow: var(--shadow-soft); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--navy-300); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+.dot:hover { transform: scale(1.3); }
+.dot.active { background: var(--gold-500); transform: scale(1.3); }
+.progress-label { position: absolute; top: 28px; right: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--navy-500); z-index: 50; letter-spacing: 0.05em; }
+
+/* ============================================================
+   SLIDE 1 — COVER
+   ============================================================ */
+.cover { align-items: center; justify-content: center; text-align: center; background: radial-gradient(circle at 30% 20%, var(--navy-800), var(--navy-900) 70%); }
+.cover-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-400); margin: 0 0 20px; z-index: 1; }
+.cover-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 56px; line-height: 1.1; color: var(--cream-100); margin: 0 0 20px; max-width: 780px; z-index: 1; }
+.cover-sub { font-size: 16px; color: var(--navy-300); max-width: 520px; margin: 0 0 40px; line-height: 1.6; z-index: 1; }
+.cover-cta { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; padding: 14px 30px; border-radius: 30px; border: 1px solid var(--gold-500); background: var(--gold-500); color: var(--navy-900); cursor: pointer; transition: background 0.2s, transform 0.15s; z-index: 1; }
+.cover-cta:hover { background: var(--gold-400); transform: translateY(-2px); }
+.cover-orb { position: absolute; width: 420px; height: 420px; border-radius: 50%; border: 1px dashed rgba(210,162,76,0.18); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; animation: spin-ccw 26s linear infinite; }
+.cover-orb.o2 { width: 620px; height: 620px; border-color: rgba(210,162,76,0.1); animation: spin-cw 34s linear infinite; }
+.cover-orb.o3 { width: 260px; height: 260px; border-color: rgba(210,162,76,0.26); animation: spin-cw 18s linear infinite; }
+@keyframes spin-cw { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(360deg); } }
+@keyframes spin-ccw { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(-360deg); } }
+@media (prefers-reduced-motion: reduce) { .cover-orb { animation: none; } }
+
+/* ============================================================
+   SLIDE 2 — MECHANISM
+   ============================================================ */
+.mechanism { padding: 64px 80px; justify-content: center; }
+.slide-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-500); margin: 0 0 8px; z-index: 1; }
+.slide-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 34px; color: var(--navy-900); margin: 0 0 40px; z-index: 1; }
+.mech-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; z-index: 1; position: relative; }
+.mech-card { background: var(--glass-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid var(--glass-border); border-radius: 18px; padding: 22px 18px; box-shadow: var(--shadow-soft); transition: transform 0.25s, box-shadow 0.25s; position: relative; overflow: hidden; }
+.mech-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
+.mech-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gold-500), var(--gold-400)); }
+.mech-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--navy-900); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+.mech-card:hover .mech-icon { transform: scale(1.08) rotate(-4deg); }
+.mech-crit { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: var(--navy-900); margin: 0 0 8px; line-height: 1.3; }
+.mech-desc { font-size: 12.5px; color: var(--navy-700); line-height: 1.55; margin: 0; }
+
+/* ============================================================
+   SLIDE 3 — INTERACTIVE TIMELINE
+   ============================================================ */
+.timeline-slide { padding: 40px 60px 130px; }
+.timeline-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; z-index: 1; }
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 14px; margin-bottom: 4px; z-index: 1; }
+.tab { flex: 0 0 auto; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--navy-500); background: transparent; color: var(--navy-700); cursor: pointer; white-space: nowrap; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.tab:hover { border-color: var(--gold-500); }
+.tab.active { background: var(--navy-900); color: var(--cream-100); border-color: var(--navy-900); }
+
+.timeline-canvas { position: relative; flex: 1; min-height: 0; z-index: 1; }
+.timeline-canvas svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+.ghost-path { fill: none; stroke: var(--navy-300); stroke-width: 1.5; stroke-dasharray: 4 7; opacity: 0.35; }
+.rider-icon { transition: opacity 0.3s ease; }
+.draw-path { fill: none; stroke: var(--gold-500); stroke-width: 2.5; stroke-linecap: round; }
+.draw-path.pending { stroke-dasharray: 400; stroke-dashoffset: 400; }
+.draw-path.drawn { stroke-dasharray: 400; stroke-dashoffset: 0; transition: stroke-dashoffset 3s linear; }
+
+.milestone-node { cursor: pointer; }
+.milestone-node .node-shape {
+  transform-box: fill-box; transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+}
+.milestone-node.ghost .node-shape { opacity: 0.3; transform: scale(0.55); }
+.milestone-node.ghost { cursor: default; }
+.milestone-node.revealed .node-shape { opacity: 1; transform: scale(1); }
+.milestone-node.open .ring { stroke: var(--gold-500); fill: var(--gold-100); }
+.ring { fill: var(--cream-100); stroke: var(--navy-500); stroke-width: 2; transition: stroke 0.2s; }
+.milestone-node:not(.ghost):hover .ring { stroke: var(--gold-500); }
+.node-icon { stroke: var(--navy-700); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.milestone-node.open .node-icon { stroke: var(--gold-500); }
+.milestone-tag { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; fill: var(--navy-900); text-anchor: middle; opacity: 0; transition: opacity 0.3s ease 0.15s; }
+.milestone-node.revealed ~ .milestone-tag { opacity: 1; }
+.milestone-amt { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: var(--gold-500); text-anchor: middle; font-weight: 500; opacity: 0; transition: opacity 0.3s ease 0.2s; }
+
+.reveal-bar { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 8px; z-index: 1; }
+.reveal-btn {
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 9px 20px; border-radius: 24px; border: 1px solid var(--navy-900);
+  background: var(--navy-900); color: var(--cream-100); cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  transition: background 0.2s, transform 0.15s;
+}
+.reveal-btn:hover { background: var(--navy-700); transform: translateY(-1px); }
+.reveal-btn:disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+.reveal-btn.ghost-btn { background: transparent; color: var(--navy-700); border-color: var(--navy-500); }
+.reveal-progress { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--navy-500); }
+
+.detail-panel {
+  background: var(--glass-bg); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--glass-border); border-radius: 16px; padding: 0 24px;
+  max-height: 0; opacity: 0; overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.35s ease, margin 0.35s ease;
+  margin-top: 0; box-shadow: var(--shadow-soft); z-index: 1;
+}
+.detail-panel.open { max-height: 150px; opacity: 1; padding: 18px 24px; margin-top: 10px; }
+.detail-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+.detail-item .dl { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy-500); margin-bottom: 4px; }
+.detail-item .dv { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 500; color: var(--navy-900); }
+.detail-item .dv.credit { color: var(--gold-500); }
+.detail-item .dv.amount { color: var(--gold-500); }
+.detail-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--navy-500); }
+
+/* ============================================================
+   SLIDE 4 — SUMMARY
+   ============================================================ */
+.summary { align-items: center; justify-content: center; text-align: center; padding: 60px; }
+.summary-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-500); margin: 0 0 12px; z-index: 1; }
+.summary-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 30px; color: var(--navy-900); margin: 0 0 40px; z-index: 1; }
+.summary-stats { display: flex; gap: 24px; margin-bottom: 40px; z-index: 1; }
+.stat-card { background: var(--glass-bg); backdrop-filter: blur(6px); border: 1px solid var(--glass-border); border-radius: 18px; padding: 28px 40px; box-shadow: var(--shadow-soft); transition: transform 0.25s; }
+.stat-card:hover { transform: translateY(-4px); }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--navy-500); margin-bottom: 8px; }
+.stat-value { font-family: 'Fraunces', serif; font-weight: 600; font-size: 30px; color: var(--navy-900); }
+.stat-value.gold { color: var(--gold-500); }
+.summary-foot { font-size: 13px; color: var(--navy-500); max-width: 480px; line-height: 1.6; z-index: 1; }
+
+@media (max-width: 900px) {
+  .cover-title { font-size: 34px; }
+  .mech-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: repeat(2, 1fr); }
+  .summary-stats { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section, .mech-card, .stat-card, .nav-btn, .node-shape, .draw-path { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="progress-label" id="progressLabel">01 / 04</div>
+
+  <!-- SECTION 1 — COVER -->
+  <section class="section cover active" data-section="0">
+    <div class="cover-orb o3"></div>
+    <div class="cover-orb"></div>
+    <div class="cover-orb o2"></div>
+    <p class="cover-eyebrow">OptumRx &middot; Prior Authorization</p>
+    <h1 class="cover-title">FTC Milestone Bonus Timeline 2026</h1>
+    <p class="cover-sub">Eleven contractor classes, three milestone payouts each &mdash; scheduled against the payroll cutoff calendar. Explore how training completion translates into actual credited pay.</p>
+    <button class="cover-cta" onclick="goTo(1)">Begin &rarr;</button>
+  </section>
+
+  <!-- SECTION 2 — ELIGIBILITY GATE -->
+  <section class="section mechanism" data-section="1">
+    <div class="morph-bg"><div class="morph-blob b1"></div><div class="morph-blob b2"></div></div>
+    <p class="slide-eyebrow">How it works</p>
+    <h2 class="slide-title">What it takes to qualify</h2>
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1DFAF" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke-linejoin="round"/><path d="M8.5 12l2.3 2.3L15.5 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="mech-crit">Scorecard &ge; 3.0</p>
+        <p class="mech-desc">Monthly performance rating must meet or exceed this threshold.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1DFAF" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke-linejoin="round"/><path d="M8.5 12l2.3 2.3L15.5 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="mech-crit">No active CAP</p>
+        <p class="mech-desc">Not currently on a Corrective Action Plan for any reason.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1DFAF" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke-linejoin="round"/><path d="M8.5 12l2.3 2.3L15.5 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="mech-crit">No tardiness</p>
+        <p class="mech-desc">No more than 30 accumulated minutes tardy per month, or 3 consecutive tardy instances in the covered period.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1DFAF" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke-linejoin="round"/><path d="M8.5 12l2.3 2.3L15.5 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="mech-crit">100% attendance</p>
+        <p class="mech-desc">No unexcused absences during the period.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F1DFAF" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z" stroke-linejoin="round"/><path d="M8.5 12l2.3 2.3L15.5 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <p class="mech-crit">No disciplinary actions</p>
+        <p class="mech-desc">Clean conduct record, no active write-ups.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 — INTERACTIVE TIMELINE -->
+  <section class="section timeline-slide" data-section="2">
+    <div class="morph-bg"><div class="morph-blob b1" style="width:220px;height:200px;"></div></div>
+    <p class="slide-eyebrow">Class timelines</p>
+    <div class="timeline-header">
+      <h2 class="slide-title" style="margin-bottom:0;" id="tlClassName">&mdash;</h2>
+      <span class="mech-desc" id="tlClassMeta" style="margin-top:0;"></span>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="timeline-canvas" id="canvas"></div>
+    <div class="reveal-bar">
+      <button class="reveal-btn ghost-btn" id="prevMilestoneBtn" onclick="prevMilestone()">&larr; Previous milestone</button>
+      <span class="reveal-progress" id="revealProgress">Milestone 1 of 4</span>
+      <button class="reveal-btn" id="nextMilestoneBtn" onclick="revealNextMilestone()">Reveal next milestone &rarr;</button>
+    </div>
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-grid" id="detailGrid"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 — SUMMARY -->
+  <section class="section summary" data-section="3">
+    <div class="morph-bg"><div class="morph-blob b1"></div><div class="morph-blob b2"></div></div>
+    <p class="summary-eyebrow">Program totals</p>
+    <h2 class="summary-title">Across all eleven classes</h2>
+    <div class="summary-stats">
+      <div class="stat-card"><div class="stat-label">Total tech HC</div><div class="stat-value">215</div></div>
+      <div class="stat-card"><div class="stat-label">Projected bonus liability</div><div class="stat-value gold">&#8369;2,770,415.60</div></div>
+      <div class="stat-card"><div class="stat-label">Milestones per class</div><div class="stat-value">3</div></div>
+    </div>
+    <p class="summary-foot">Figures assume full headcount, full contract term, and a passing scorecard at every gated tranche. Actual payout tracks against the FTC Milestone Bonus Tracker workbook.</p>
+  </section>
+
+  <div class="nav-chrome">
+    <button class="nav-btn" id="prevBtn" onclick="prevSection()" aria-label="Previous">&larr;</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn" id="nextBtn" onclick="nextSection()" aria-label="Next">&rarr;</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   TIMELINE DATA
+   ------------------------------------------------------------
+   Edit this array to change class names, sites, headcounts, or
+   milestone dates/amounts. Each class has 4 stages: NEO/start,
+   Tranche 1, Tranche 2, Tranche 3. "amount" is null for the NEO
+   stage (not a paid milestone) and a PHP figure for the rest.
+   ============================================================ */
+const TIMELINE_DATA = [{"name":"Tech 2.2.1 CEB","site":"CEB","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Jul 24, 2026","credit":"Aug 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Sep 11, 2026","credit":"Sep 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Oct 11, 2026","credit":"Oct 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2500.0},{"label":"Tranche 3 \u2014 Contract End","schedule":"Jan 15, 2027","credit":"Jan 30, 2027","window":"6th\u201320th \u2192 credited 30th","amount":8000.0}]},{"name":"Tech 2.2.2 CEB","site":"CEB","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Aug 14, 2026","credit":"Aug 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 2, 2026","credit":"Oct 15, 2026","window":"1st\u20135th \u2192 credited 15th this month","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 2, 2026","credit":"Nov 15, 2026","window":"1st\u20135th \u2192 credited 15th this month","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 5, 2027","credit":"Feb 15, 2027","window":"1st\u20135th \u2192 credited 15th this month","amount":7916.67}]},{"name":"Tech 2.2.3 CEB","site":"CEB","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Aug 21, 2026","credit":"Sep 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 9, 2026","credit":"Oct 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 9, 2026","credit":"Nov 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 12, 2027","credit":"Feb 28, 2027","window":"6th\u201320th \u2192 credited 28th (month-end)","amount":7916.67}]},{"name":"Tech 2.2.4 QC","site":"QC","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Aug 28, 2026","credit":"Sep 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 16, 2026","credit":"Oct 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 16, 2026","credit":"Nov 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 19, 2027","credit":"Feb 28, 2027","window":"6th\u201320th \u2192 credited 28th (month-end)","amount":7916.67}]},{"name":"Tech 2.2.5 CEB","site":"CEB","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Sep 4, 2026","credit":"Sep 15, 2026","window":"1st\u20135th \u2192 credited 15th this month","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 23, 2026","credit":"Nov 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 23, 2026","credit":"Dec 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Jan 29, 2027","credit":"Feb 15, 2027","window":"21st\u201331st \u2192 credited 15th next month","amount":5583.33}]},{"name":"Tech 2.2.6 QC","site":"QC","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Sep 11, 2026","credit":"Sep 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 30, 2026","credit":"Nov 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 30, 2026","credit":"Dec 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 5, 2027","credit":"Feb 15, 2027","window":"1st\u20135th \u2192 credited 15th this month","amount":5583.33}]},{"name":"Tech 2.2.7 QC","site":"QC","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Sep 11, 2026","credit":"Sep 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Oct 30, 2026","credit":"Nov 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Nov 30, 2026","credit":"Dec 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":2583.33},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 5, 2027","credit":"Feb 15, 2027","window":"1st\u20135th \u2192 credited 15th this month","amount":5583.33}]},{"name":"Tech 2.2.8 DVO","site":"DVO","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Sep 18, 2026","credit":"Sep 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Nov 6, 2026","credit":"Nov 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Dec 6, 2026","credit":"Dec 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2500.0},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 12, 2027","credit":"Feb 28, 2027","window":"6th\u201320th \u2192 credited 28th (month-end)","amount":5666.67}]},{"name":"Tech 2.2.9 CEB","site":"CEB","hc":15,"stages":[{"label":"NEO / Start Date","schedule":"Sep 18, 2026","credit":"Sep 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Nov 6, 2026","credit":"Nov 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Dec 6, 2026","credit":"Dec 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2500.0},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 12, 2027","credit":"Feb 28, 2027","window":"6th\u201320th \u2192 credited 28th (month-end)","amount":5666.67}]},{"name":"Tech 2.2.10 DVO","site":"DVO","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Oct 9, 2026","credit":"Oct 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Nov 27, 2026","credit":"Dec 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Dec 27, 2026","credit":"Jan 15, 2027","window":"21st\u201331st \u2192 credited 15th next month","amount":2500.0},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 5, 2027","credit":"Feb 15, 2027","window":"1st\u20135th \u2192 credited 15th this month","amount":3333.33}]},{"name":"Tech 2.2.11 QC","site":"QC","hc":20,"stages":[{"label":"NEO / Start Date","schedule":"Sep 25, 2026","credit":"Oct 15, 2026","window":"21st\u201331st \u2192 credited 15th next month","amount":null},{"label":"Tranche 1 \u2014 PST + OJT Complete","schedule":"Nov 13, 2026","credit":"Nov 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":4083.33},{"label":"Tranche 2 \u2014 1 Month After Tranche 1","schedule":"Dec 13, 2026","credit":"Dec 30, 2026","window":"6th\u201320th \u2192 credited 30th","amount":2500.0},{"label":"Tranche 3 \u2014 Contract End","schedule":"Feb 17, 2027","credit":"Feb 28, 2027","window":"6th\u201320th \u2192 credited 28th (month-end)","amount":5500.0}]}];
+
+/* Icon paths per stage index (0=start,1=T1,2=T2,3=T3), 24x24 viewBox */
+const STAGE_ICONS = [
+  'M5 21V5a2 2 0 0 1 2-2h6l6 6v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2Z M13 3v6h6', // flag/doc = start
+  'M9 12l2 2 4-4 M12 3l8 4-8 4-8-4 8-4Z M4 11v5c0 1 3 3 8 3s8-2 8-3v-5', // grad cap+check = T1
+  'M4 4v5h5 M20 20v-5h-5 M4.5 15a8 8 0 0 0 14.8 3 M19.5 9a8 8 0 0 0-14.8-3', // refresh = T2
+  'M12 3v18 M8 7h5.5a2.5 2.5 0 0 1 0 5H10a2.5 2.5 0 0 0 0 5h6', // peso/coin = T3
+];
+
+/* Vehicle silhouettes riding each segment: bike (start->T1), motorcycle (T1->T2), car (T2->T3) */
+const RIDER_ICONS = [
+  '<circle cx="-9" cy="6" r="5" fill="none" stroke="var(--gold-500)" stroke-width="1.8"/><circle cx="9" cy="6" r="5" fill="none" stroke="var(--gold-500)" stroke-width="1.8"/><path d="M-9 6 L-2 -4 L6 -4 M-2 -4 L2 6 M9 6 L2 6 M2 -4 L6 6 M-2 -4 L-5 -7" fill="none" stroke="var(--gold-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  '<circle cx="-10" cy="7" r="5.5" fill="none" stroke="var(--gold-500)" stroke-width="1.8"/><circle cx="10" cy="7" r="5.5" fill="none" stroke="var(--gold-500)" stroke-width="1.8"/><path d="M-10 7 L-4 0 L6 0 L10 7 M-4 0 L0 -5 L6 0" fill="none" stroke="var(--gold-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="-2.5" y="-8" width="9" height="3" rx="1.5" fill="var(--gold-500)"/>',
+  '<rect x="-14" y="-2" width="28" height="9" rx="3" fill="none" stroke="var(--gold-500)" stroke-width="1.8"/><path d="M-9 -2 L-5 -8 L7 -8 L10 -2" fill="none" stroke="var(--gold-500)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="-8" cy="8" r="3.5" fill="var(--gold-500)"/><circle cx="8" cy="8" r="3.5" fill="var(--gold-500)"/>',
+];
+const RIDER_DURATION_MS = 3000;
+
+/* ============================================================
+   SLIDE NAVIGATION (manual only — no autoplay)
+   ============================================================ */
+const sections = Array.from(document.querySelectorAll('.section'));
+const totalSections = sections.length;
+let currentSection = 0;
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const dotsEl = document.getElementById('dots');
+const progressLabel = document.getElementById('progressLabel');
+
+function renderDots() {
+  dotsEl.innerHTML = sections.map((_, i) => `<div class="dot${i === currentSection ? ' active' : ''}" data-idx="${i}"></div>`).join('');
+  dotsEl.querySelectorAll('.dot').forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.idx, 10))));
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= totalSections || idx === currentSection) return;
+  const direction = idx > currentSection ? 'forward' : 'back';
+  sections[currentSection].classList.remove('active');
+  if (direction === 'back') sections[currentSection].classList.add('leaving-back');
+  currentSection = idx;
+  sections[currentSection].classList.remove('leaving-back');
+  sections[currentSection].classList.add('active');
+  progressLabel.textContent = String(currentSection + 1).padStart(2, '0') + ' / ' + String(totalSections).padStart(2, '0');
+  prevBtn.disabled = currentSection === 0;
+  nextBtn.disabled = currentSection === totalSections - 1;
+  renderDots();
+  if (currentSection === 2 && !timelineInitialized) initTimeline();
+}
+function nextSection() { goTo(currentSection + 1); }
+function prevSection() { goTo(currentSection - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (document.activeElement && ['BUTTON'].includes(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowRight' && currentSection !== 2) nextSection();
+  if (e.key === 'ArrowLeft' && currentSection !== 2) prevSection();
+});
+
+renderDots();
+prevBtn.disabled = true;
+
+/* ============================================================
+   SLIDE 3 — CURVED TIMELINE, PROGRESSIVE REVEAL, MORPH ICONS
+   ============================================================ */
+let timelineInitialized = false;
+let currentClass = 0;
+let revealedCount = 1;   // how many milestones are visible (1 = only start)
+let openMilestone = null;
+
+const tabsEl = document.getElementById('tabs');
+const canvasEl = document.getElementById('canvas');
+const detailPanel = document.getElementById('detailPanel');
+const detailGrid = document.getElementById('detailGrid');
+const tlClassName = document.getElementById('tlClassName');
+const tlClassMeta = document.getElementById('tlClassMeta');
+const nextMilestoneBtn = document.getElementById('nextMilestoneBtn');
+const prevMilestoneBtn = document.getElementById('prevMilestoneBtn');
+const revealProgress = document.getElementById('revealProgress');
+
+function renderTabs() {
+  tabsEl.innerHTML = TIMELINE_DATA.map((c, i) => `<div class="tab${i === currentClass ? ' active' : ''}" data-idx="${i}">${c.name}</div>`).join('');
+  tabsEl.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentClass = parseInt(tab.dataset.idx, 10);
+      revealedCount = 1;
+      openMilestone = null;
+      renderTabs();
+      renderCurvedTimeline(TIMELINE_DATA[currentClass]);
+      updateRevealUI();
+    });
+  });
+}
+
+const NODE_POSITIONS = [
+  { x: 90,  y: 190 },
+  { x: 330, y: 70  },
+  { x: 620, y: 190 },
+  { x: 870, y: 70  },
+];
+
+function segmentPath(a, b) {
+  const midX = (a.x + b.x) / 2;
+  return `M ${a.x} ${a.y} C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`;
+}
+function fullGhostPath() {
+  const pts = NODE_POSITIONS;
+  let d = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const midX = (a.x + b.x) / 2;
+    d += ` C ${midX} ${a.y}, ${midX} ${b.y}, ${b.x} ${b.y}`;
+  }
+  return d;
+}
+
+function shortLabel(label) {
+  return label.replace('\u2014', '').trim().split(' ').slice(0, 3).join(' ');
+}
+
+function fmtAmount(v) {
+  if (v === null || v === undefined) return null;
+  return '\u20b1' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderCurvedTimeline(cls) {
+  tlClassName.textContent = cls.name;
+  tlClassMeta.textContent = `Site: ${cls.site}  \u00b7  Tech HC: ${cls.hc}`;
+
+  const segs = [];
+  for (let i = 0; i < NODE_POSITIONS.length - 1; i++) {
+    segs.push(segmentPath(NODE_POSITIONS[i], NODE_POSITIONS[i + 1]));
+  }
+
+  const nodesSvg = cls.stages.map((s, i) => {
+    const p = NODE_POSITIONS[i];
+    const labelY = p.y < 130 ? p.y - 54 : p.y + 46;
+    const dateAmtY = p.y < 130 ? p.y - 34 : p.y + 64;
+    const amtTxt = fmtAmount(s.amount);
+    return `
+      <g class="milestone-node ghost" data-idx="${i}" transform="translate(${p.x},${p.y})">
+        <g class="node-shape">
+          <circle class="ring" r="24"/>
+          <path class="node-icon" transform="translate(-12,-12)" d="${STAGE_ICONS[i]}"/>
+        </g>
+      </g>
+      <text class="milestone-tag" x="${p.x}" y="${labelY}" data-idx="${i}">${shortLabel(s.label)}</text>
+      <text class="milestone-date" x="${p.x}" y="${dateAmtY}" data-idx="${i}" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;fill:var(--navy-500);text-anchor:middle;opacity:0;">${s.schedule}${amtTxt ? '   ' : ''}<tspan fill="var(--gold-500)" font-weight="500">${amtTxt || ''}</tspan></text>
+    `;
+  }).join('');
+
+  canvasEl.innerHTML = `
+    <svg viewBox="0 0 960 260" preserveAspectRatio="xMidYMid meet">
+      <path class="ghost-path" d="${fullGhostPath()}"/>
+      ${segs.map((d, i) => `<path class="draw-path pending" data-seg="${i}" d="${d}"/>`).join('')}
+      ${nodesSvg}
+      ${segs.map((d, i) => `
+        <g class="rider-icon" data-seg="${i}" opacity="0">
+          ${RIDER_ICONS[i]}
+          <animateMotion path="${d}" dur="${RIDER_DURATION_MS / 1000}s" begin="indefinite" fill="freeze"/>
+        </g>
+      `).join('')}
+    </svg>
+  `;
+
+  canvasEl.querySelectorAll('.milestone-node').forEach(node => {
+    node.addEventListener('click', () => {
+      const idx = parseInt(node.dataset.idx, 10);
+      if (idx >= revealedCount) return;
+      toggleMilestone(idx, cls);
+    });
+  });
+
+  applyRevealState();
+}
+
+function applyRevealState() {
+  canvasEl.querySelectorAll('.milestone-node').forEach(node => {
+    const idx = parseInt(node.dataset.idx, 10);
+    node.classList.toggle('ghost', idx >= revealedCount);
+    node.classList.toggle('revealed', idx < revealedCount);
+  });
+  canvasEl.querySelectorAll('.milestone-tag, .milestone-amt').forEach(t => {
+    const idx = parseInt(t.dataset.idx, 10);
+    t.style.opacity = idx < revealedCount ? '1' : '0';
+  });
+  canvasEl.querySelectorAll('[data-idx].milestone-date, text[data-idx]').forEach(t => {});
+  canvasEl.querySelectorAll('text').forEach(t => {
+    const idx = t.dataset.idx;
+    if (idx === undefined) return;
+    t.style.opacity = parseInt(idx, 10) < revealedCount ? '1' : '0';
+  });
+  canvasEl.querySelectorAll('.draw-path').forEach(p => {
+    const seg = parseInt(p.dataset.seg, 10);
+    p.classList.toggle('drawn', seg < revealedCount - 1);
+    p.classList.toggle('pending', !(seg < revealedCount - 1));
+  });
+}
+
+function updateRevealUI() {
+  const total = TIMELINE_DATA[currentClass].stages.length;
+  revealProgress.textContent = `Milestone ${revealedCount} of ${total}`;
+  nextMilestoneBtn.disabled = revealedCount >= total;
+  prevMilestoneBtn.disabled = revealedCount <= 1;
+  nextMilestoneBtn.textContent = revealedCount >= total ? 'All milestones revealed' : 'Reveal next milestone \u2192';
+}
+
+function revealNextMilestone() {
+  const total = TIMELINE_DATA[currentClass].stages.length;
+  if (revealedCount >= total) return;
+  const segIdx = revealedCount - 1;
+  nextMilestoneBtn.disabled = true;
+  prevMilestoneBtn.disabled = true;
+  const rider = canvasEl.querySelector(`.rider-icon[data-seg="${segIdx}"]`);
+  const motion = rider ? rider.querySelector('animateMotion') : null;
+  const runReveal = () => {
+    if (rider) rider.setAttribute('opacity', '0');
+    revealedCount += 1;
+    applyRevealState();
+    updateRevealUI();
+    toggleMilestone(revealedCount - 1, TIMELINE_DATA[currentClass]);
+  };
+  if (rider && motion) {
+    rider.setAttribute('opacity', '1');
+    motion.beginElement();
+    setTimeout(runReveal, RIDER_DURATION_MS);
+  } else {
+    runReveal();
+  }
+}
+
+function prevMilestone() {
+  if (revealedCount <= 1) return;
+  revealedCount -= 1;
+  closeDetail();
+  applyRevealState();
+  updateRevealUI();
+}
+
+function toggleMilestone(idx, cls) {
+  const allNodes = canvasEl.querySelectorAll('.milestone-node');
+  if (openMilestone === idx) { closeDetail(); return; }
+  allNodes.forEach(n => n.classList.remove('open'));
+  allNodes[idx].classList.add('open');
+  openMilestone = idx;
+  const s = cls.stages[idx];
+  const amtTxt = fmtAmount(s.amount);
+  detailGrid.innerHTML = `
+    <div class="detail-item"><div class="dl">Milestone</div><div class="dv" style="font-family:'Inter',sans-serif;font-size:13px;">${s.label}</div></div>
+    <div class="detail-item"><div class="dl">Scheduled</div><div class="dv">${s.schedule}</div></div>
+    <div class="detail-item"><div class="dl">Credited</div><div class="dv credit">${s.credit}</div></div>
+    <div class="detail-item"><div class="dl">Amount</div><div class="dv amount">${amtTxt ? amtTxt : 'Program start'}</div></div>
+    <div class="detail-item"><div class="dl">Cutoff window</div><div class="detail-meta">${s.window}</div></div>
+  `;
+  detailPanel.classList.add('open');
+}
+
+function closeDetail() {
+  detailPanel.classList.remove('open');
+  canvasEl.querySelectorAll('.milestone-node').forEach(n => n.classList.remove('open'));
+  openMilestone = null;
+}
+
+function initTimeline() {
+  timelineInitialized = true;
+  renderTabs();
+  renderCurvedTimeline(TIMELINE_DATA[currentClass]);
+  updateRevealUI();
+}
+</script>
+
+</body>
+</html>
